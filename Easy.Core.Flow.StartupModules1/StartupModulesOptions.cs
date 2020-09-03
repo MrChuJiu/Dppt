@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Easy.Core.Flow.StartupModules1
+namespace Easy.Core.Flow.StartupModules
 {
     public class StartupModulesOptions
     {

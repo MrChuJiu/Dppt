@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Easy.Core.Flow.StartupModules1
+namespace Easy.Core.Flow.StartupModules
 {
     /// <summary>
     /// 模块启动筛选器

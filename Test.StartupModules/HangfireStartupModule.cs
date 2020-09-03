@@ -1,4 +1,4 @@
-﻿using Easy.Core.Flow.StartupModules1;
+﻿using Easy.Core.Flow.StartupModules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
