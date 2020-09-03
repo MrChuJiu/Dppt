@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Easy.Core.Flow.StartupModules1\Easy.Core.Flow.StartupModules1.csproj" />
+  </ItemGroup>
+
+
+</Project>
