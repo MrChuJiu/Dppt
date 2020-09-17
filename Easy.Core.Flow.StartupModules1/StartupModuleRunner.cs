@@ -8,32 +8,39 @@ using System.Text;
 
 namespace Easy.Core.Flow.StartupModules
 {
-    public class StartupModuleRunner : IStartupModuleRunner
+    /// <summary>
+    /// 运行模块方法
+    /// </summary>
+    public class StartupModuleRunner
     {
         private readonly StartupModulesOptions _options;
 
-        /// <summary>
-        ///  初始化实例 通过 StartupModulesOptions 来发现 IStartupModule
-        /// </summary>
         public StartupModuleRunner(StartupModulesOptions options)
         {
             _options = options;
         }
-        public void Configure(IApplicationBuilder app, IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
-        {
-            using var scope = app.ApplicationServices.CreateScope();
-            foreach (var cfg in _options.StartupModules)
-            {
-                cfg.Configure(app, hostingEnvironment);
-            }
-        }
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
+            var ctx = new ConfigureServicesContext(configuration, hostingEnvironment, _options);
             foreach (var cfg in _options.StartupModules)
             {
-                cfg.ConfigureServices(services);
+                cfg.ConfigureServices(services, ctx);
             }
         }
+
+        public void Configure(IApplicationBuilder app, IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
+        {
+            using (var scope = app.ApplicationServices.CreateScope()) {
+                var ctx = new ConfigureMiddlewareContext(configuration, hostingEnvironment, scope.ServiceProvider, _options);
+
+                foreach (var cfg in _options.StartupModules)
+                {
+                    cfg.Configure(app, ctx);
+                }
+            }
+               
+        }
+
     }
 }

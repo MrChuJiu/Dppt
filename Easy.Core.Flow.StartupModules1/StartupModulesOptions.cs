@@ -9,40 +9,45 @@ namespace Easy.Core.Flow.StartupModules
     public class StartupModulesOptions
     {
         /// <summary>
-        /// 模块  StartupModules 集合 
+        /// 存储实验了IStartupModule接口的模块
         /// </summary>
-        public ICollection<IAppModule> StartupModules { get; } = new List<IAppModule>();
+        public ICollection<IStartupModule> StartupModules { get; } = new List<IStartupModule>();
 
-        public void DiscoverStartupModules()
-        {
-            DiscoverStartModule(Assembly.GetEntryAssembly()!);
-        }
+        /// <summary>
+        /// 检索当前项目启动模块
+        /// </summary>
+        public void DiscoverStartupModules() => DiscoverStartupModules(Assembly.GetEntryAssembly()!);
 
-        private void DiscoverStartModule(params Assembly[] assemblies)
+        public void DiscoverStartupModules(params Assembly[] assemblies)
         {
             if (assemblies == null || assemblies.Length == 0 || assemblies.All(a => a == null))
             {
-                throw new ArgumentException("没有从程序及中发现任何模块", nameof(assemblies));
+                throw new ArgumentException("没有发现任何模块", nameof(assemblies));
             }
 
             foreach (var type in assemblies.SelectMany(a => a.ExportedTypes))
             {
-                if (typeof(IAppModule).IsAssignableFrom(type))
+                if (typeof(IStartupModule).IsAssignableFrom(type))
                 {
                     var instance = Activate(type);
                     StartupModules.Add(instance);
                 }
             }
         }
-        private IAppModule Activate(Type type)
+        /// <summary>
+        /// 创建实例
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private IStartupModule Activate(Type type)
         {
             try
             {
-                return (IAppModule)Activator.CreateInstance(type)!;
+                return (IStartupModule)Activator.CreateInstance(type)!;
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"未能成功创建实例 {nameof(IAppModule)}  '{type.Name}'.", ex);
+                throw new InvalidOperationException($"创建实例为 {nameof(IStartupModule)} 的实例失败 Name：'{type.Name}'.", ex);
             }
         }
     }

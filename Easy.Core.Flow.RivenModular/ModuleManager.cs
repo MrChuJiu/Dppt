@@ -23,8 +23,6 @@ namespace Easy.Core.Flow.RivenModular
         /// </summary>
         public virtual IServiceProvider ServiceProvider { get; protected set; }
 
-
-
         public IServiceProvider ApplicationInitialization(IServiceProvider serviceProvider)
         {
             var configuration = serviceProvider.GetService<IConfiguration>();
@@ -137,7 +135,6 @@ namespace Easy.Core.Flow.RivenModular
 
             return moduleDescriptors;
         }
-
 
         public void StartModule<TModule>(IServiceCollection services) where TModule : IAppModule
         {

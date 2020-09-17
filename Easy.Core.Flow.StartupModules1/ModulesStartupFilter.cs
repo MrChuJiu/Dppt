@@ -7,9 +7,6 @@ using System.Text;
 
 namespace Easy.Core.Flow.StartupModules
 {
-    /// <summary>
-    /// 模块启动筛选器
-    /// </summary>
     public class ModulesStartupFilter : IStartupFilter
     {
         private readonly StartupModuleRunner _runner;
@@ -23,10 +20,15 @@ namespace Easy.Core.Flow.StartupModules
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) => app =>
+        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
         {
-            _runner.Configure(app, _configuration, _hostingEnvironment);
-            next(app);
-        };
+            return app =>
+            {
+
+                _runner.Configure(app, _configuration, _hostingEnvironment);
+                next(app);
+
+            };
+        }
     }
 }

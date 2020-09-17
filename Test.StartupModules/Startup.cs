@@ -26,7 +26,7 @@ namespace Test.StartupModules
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRivenModule<MyAppStartupModule>(Configuration);
+            //services.AddRivenModule<MyAppStartupModule>(Configuration);
             services.AddControllers();
             Console.WriteLine("Startup----ConfigureServices");
         }
@@ -34,6 +34,8 @@ namespace Test.StartupModules
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //app.ApplicationServices.UseRivenModule();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
