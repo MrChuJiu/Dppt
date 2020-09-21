@@ -12,9 +12,9 @@
 
 # 其他教程预览 
 
-###Git地址： https://github.com/MrChuJiu/EasyLogger
+###分库分表项目实战教程
 
-###教程
+###Git地址： https://github.com/MrChuJiu/EasyLogger
 
 [01 |  前言](https://www.cnblogs.com/HDONG/p/13517146.html)
 
