@@ -9,18 +9,8 @@ namespace Easy.Core.Flow.RivenModular
     /// </summary>
     public static class Topological
     {
+        public static List<T> Sort<T>(IEnumerable<T> source, Func<T, IEnumerable<T>> getDependencies) {
 
-
-
-        /// <summary>
-        /// 进行拓扑排序
-        /// </summary>
-        /// <typeparam name="T">类型</typeparam>
-        /// <param name="source">元数据</param>
-        /// <param name="getDependencies">依赖获取函数</param>
-        /// <returns></returns>
-        public static List<T> Sort<T>(IEnumerable<T> source, Func<T, IEnumerable<T>> getDependencies)
-        {
             var sorted = new List<T>();
             var visited = new Dictionary<T, bool>();
 
@@ -32,14 +22,6 @@ namespace Easy.Core.Flow.RivenModular
             return sorted;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="item"></param>
-        /// <param name="getDependencies"></param>
-        /// <param name="sorted"></param>
-        /// <param name="visited"></param>
         static void Visit<T>(T item, Func<T, IEnumerable<T>> getDependencies, List<T> sorted, Dictionary<T, bool> visited)
         {
             bool inProcess;
@@ -51,7 +33,7 @@ namespace Easy.Core.Flow.RivenModular
                 // 如果处理的为当前节点，则说明存在循环引用
                 if (inProcess)
                 {
-                    throw new ArgumentException("topological module Cyclic dependency found.");
+                    throw new ArgumentException("模块出现循环依赖.");
                 }
             }
             else
@@ -76,5 +58,6 @@ namespace Easy.Core.Flow.RivenModular
                 sorted.Add(item);
             }
         }
+
     }
 }

@@ -13,43 +13,36 @@ namespace Easy.Core.Flow.RivenModular
         /// 配置服务前
         /// </summary>
         /// <param name="context"></param>
-        void OnPreConfigureServices(ServiceConfigurationContext context);
+        void OnPreConfigureServices();
         /// <summary>
         /// 配置服务
         /// </summary>
         /// <param name="context">配置上下文</param>
-        void OnConfigureServices(ServiceConfigurationContext context);
+        void OnConfigureServices();
         /// <summary>
         /// 配置服务后
         /// </summary>
         /// <param name="context"></param>
-        void OnPostConfigureServices(ServiceConfigurationContext context);
-
-
-
+        void OnPostConfigureServices();
         /// <summary>
         /// 应用启动前
         /// </summary>
         /// <param name="context"></param>
-        void OnPreApplicationInitialization(ApplicationInitializationContext context);
-
+        void OnPreApplicationInitialization();
         /// <summary>
         /// 应用启动
         /// </summary>
         /// <param name="context"></param>
-        void OnApplicationInitialization(ApplicationInitializationContext context);
-
+        void OnApplicationInitialization();
         /// <summary>
         /// 应用启动后
         /// </summary>
         /// <param name="context"></param>
-        void OnPostApplicationInitialization(ApplicationInitializationContext context);
-
+        void OnPostApplicationInitialization();
         /// <summary>
         /// 应用停止
         /// </summary>
         /// <param name="context"></param>
-        void OnApplicationShutdown(ApplicationShutdownContext context);
-
+        void OnApplicationShutdown();
     }
 }

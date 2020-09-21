@@ -10,6 +10,7 @@ namespace Easy.Core.Flow.RivenModular
     public class ModuleDescriptor
     {
         private object _instance;
+
         /// <summary>
         /// 模块类型
         /// </summary>
@@ -19,6 +20,7 @@ namespace Easy.Core.Flow.RivenModular
         /// 依赖项
         /// </summary>
         public ModuleDescriptor[] Dependencies { get; private set; }
+
         /// <summary>
         /// 实例
         /// </summary>
@@ -28,17 +30,17 @@ namespace Easy.Core.Flow.RivenModular
             {
                 if (this._instance == null)
                 {
-                    // 根据类型创建这个对象
                     this._instance = Activator.CreateInstance(this.ModuleType);
                 }
                 return this._instance;
             }
         }
+
         public ModuleDescriptor(Type moduleType, params ModuleDescriptor[] dependencies)
         {
             this.ModuleType = moduleType;
+            // 如果模块依赖 为空给一个空数组
             this.Dependencies = dependencies ?? new ModuleDescriptor[0];
         }
-
     }
 }
