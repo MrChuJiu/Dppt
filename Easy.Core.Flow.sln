@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.StartupModules", "Test
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StartupModules", "StartupModules", "{EA3D236C-2CA8-4A46-B4D9-B3B773CB89CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Easy.Core.Flow.StartupModules", "Easy.Core.Flow.StartupModules1\Easy.Core.Flow.StartupModules.csproj", "{0B088293-2A12-4A8D-99D7-C521E5536C13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Easy.Core.Flow.StartupModules", "Easy.Core.Flow.StartupModules1\Easy.Core.Flow.StartupModules.csproj", "{0B088293-2A12-4A8D-99D7-C521E5536C13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Easy.Core.Flow.RivenModular", "Easy.Core.Flow.RivenModular\Easy.Core.Flow.RivenModular.csproj", "{914F80C1-00FE-4030-AB04-17A64708F98A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Easy.Core.Flow.RivenModular", "Easy.Core.Flow.RivenModular\Easy.Core.Flow.RivenModular.csproj", "{914F80C1-00FE-4030-AB04-17A64708F98A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.RivenModular", "Test.RivenModular\Test.RivenModular.csproj", "{F9C836B9-FBC1-4A7B-9208-46E9BF4EE0B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,10 @@ Global
 		{914F80C1-00FE-4030-AB04-17A64708F98A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{914F80C1-00FE-4030-AB04-17A64708F98A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{914F80C1-00FE-4030-AB04-17A64708F98A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9C836B9-FBC1-4A7B-9208-46E9BF4EE0B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9C836B9-FBC1-4A7B-9208-46E9BF4EE0B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9C836B9-FBC1-4A7B-9208-46E9BF4EE0B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9C836B9-FBC1-4A7B-9208-46E9BF4EE0B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +45,7 @@ Global
 		{AE0D88DC-F5A4-4F85-A0E6-5009DEA42253} = {92D86724-E442-400B-B35D-61C8442CA426}
 		{0B088293-2A12-4A8D-99D7-C521E5536C13} = {EA3D236C-2CA8-4A46-B4D9-B3B773CB89CE}
 		{914F80C1-00FE-4030-AB04-17A64708F98A} = {EA3D236C-2CA8-4A46-B4D9-B3B773CB89CE}
+		{F9C836B9-FBC1-4A7B-9208-46E9BF4EE0B5} = {92D86724-E442-400B-B35D-61C8442CA426}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {80E96E55-192B-4E9A-8563-646985B8CFB8}

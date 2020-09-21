@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Easy.Core.Flow.RivenModular\Easy.Core.Flow.RivenModular.csproj" />
     <ProjectReference Include="..\Easy.Core.Flow.StartupModules1\Easy.Core.Flow.StartupModules.csproj" />
   </ItemGroup>
 

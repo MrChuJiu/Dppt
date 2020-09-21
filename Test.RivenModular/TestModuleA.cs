@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Test.StartupModules
+namespace Test.RivenModular
 {
     [DependsOn(
-        typeof(TestModuleA)
-        )]
-    public class MyAppStartupModule : AppModule
+     typeof(TestModuleB)
+       )]
+    public class TestModuleA : AppModule
     {
         public override void OnPreConfigureServices(ServiceConfigurationContext context)
         {

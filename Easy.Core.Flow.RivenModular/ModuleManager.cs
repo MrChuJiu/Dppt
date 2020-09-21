@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
 
 namespace Easy.Core.Flow.RivenModular
 {
@@ -15,6 +17,15 @@ namespace Easy.Core.Flow.RivenModular
         /// 模块接口类型全名称
         /// </summary>
         public static string _moduleInterfaceTypeFullName = typeof(IAppModule).FullName;
+        /// <summary>
+        /// 模块明细和实例
+        /// </summary>
+        public virtual IReadOnlyList<ModuleDescriptor> ModuleDescriptors { get; protected set; }
+        /// <summary>
+        /// ioc容器
+        /// </summary>
+        public virtual IServiceProvider ServiceProvider { get; protected set; }
+
 
         /// <summary>
         /// 入口 StartModule 
@@ -25,10 +36,91 @@ namespace Easy.Core.Flow.RivenModular
         /// <param name="services"></param>
         public void StartModule<TModule>(IServiceCollection services) where TModule : IAppModule
         {
+
             var moduleDescriptors = new List<ModuleDescriptor>();
 
             var moduleDescriptorList = this.ModuleSort<TModule>();
+            // 去除重复的引用 进行注入
+            foreach (var item in moduleDescriptorList)
+            {
+                if (moduleDescriptors.Any(o => o.ModuleType.FullName == item.ModuleType.FullName))
+                {
+                    continue;
+                }
+                moduleDescriptors.Add(item);
+                services.AddSingleton(item.ModuleType, item.Instance);
+            }
+            ModuleDescriptors = moduleDescriptors.AsReadOnly();
+        }
 
+        /// <summary>
+        /// 进行模块的  ConfigurationService 方法调用
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        public IServiceCollection ConfigurationService(IServiceCollection services, IConfiguration configuration) {
+
+            var context = new ServiceConfigurationContext(services, configuration);
+
+            foreach (var module in ModuleDescriptors)
+            {
+                (module.Instance as IAppModule)?.OnPreConfigureServices(context);
+            }
+
+            foreach (var module in ModuleDescriptors)
+            {
+                (module.Instance as IAppModule)?.OnConfigureServices(context);
+            }
+
+            foreach (var module in ModuleDescriptors)
+            {
+                (module.Instance as IAppModule)?.OnPostConfigureServices(context);
+            }
+
+            return services;
+        }
+        /// <summary>
+        /// 进行模块的  Configure 方法调用
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        /// <returns></returns>
+        public IServiceProvider ApplicationInitialization(IServiceProvider serviceProvider)
+        {
+            var configuration = serviceProvider.GetService<IConfiguration>();
+            var context = new ApplicationInitializationContext(serviceProvider, configuration);
+
+            foreach (var module in ModuleDescriptors)
+            {
+                (module.Instance as IAppModule)?.OnPreApplicationInitialization(context);
+            }
+
+            foreach (var module in ModuleDescriptors)
+            {
+                (module.Instance as IAppModule)?.OnApplicationInitialization(context);
+            }
+
+            foreach (var module in ModuleDescriptors)
+            {
+                (module.Instance as IAppModule)?.OnPostApplicationInitialization(context);
+            }
+            this.ServiceProvider = serviceProvider;
+            return serviceProvider;
+        }
+        /// <summary>
+        /// 模块销毁
+        /// </summary>
+        public void ApplicationShutdown()
+        {
+
+            var context = new ApplicationShutdownContext(this.ServiceProvider);
+            var modules = ModuleDescriptors.Reverse().ToList();
+
+
+            foreach (var module in ModuleDescriptors)
+            {
+                (module.Instance as IAppModule)?.OnApplicationShutdown(context);
+            }
         }
 
         /// <summary>
@@ -36,13 +128,14 @@ namespace Easy.Core.Flow.RivenModular
         /// </summary>
         /// <typeparam name="TModule"></typeparam>
         /// <returns></returns>
-        private List<ModuleDescriptor> ModuleSort<TModule>() where TModule : IAppModule
+        public virtual List<ModuleDescriptor> ModuleSort<TModule>() where TModule : IAppModule
         {
             // 得到模块树依赖
             var moduleDescriptors = VisitModule(typeof(TModule));
             // 因为现在得到的数据是从树根开始到树叶 - 实际的注入顺序应该是从树叶开始 所以这里需要对模块进行排序
             return Topological.Sort(moduleDescriptors, o => o.Dependencies);
         }
+
 
         /// <summary>
         /// 获取模块依赖树
@@ -86,5 +179,21 @@ namespace Easy.Core.Flow.RivenModular
 
             return moduleDescriptors;
         }
+
+        /// <summary>
+        /// 主模块销毁的时候 销毁子模块
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
+
+        protected virtual void Dispose(bool state)
+        {
+            this.ApplicationShutdown();
+
+        }
+
+
     }
 }
