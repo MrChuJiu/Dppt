@@ -11,9 +11,7 @@ namespace Easy.Core.Flow.StartupModules
         /// <summary>
         /// 存储实验了IStartupModule接口的模块
         /// </summary>
-        public IList<IStartupModule> StartupModules { get { return _startupModules; } }
-
-        private IList<IStartupModule> _startupModules { get; set; }
+        public IList<IStartupModule> StartupModules { get; private set; }
 
         /// <summary>
         /// 检索当前项目启动模块
@@ -28,7 +26,7 @@ namespace Easy.Core.Flow.StartupModules
             }
 
             // 是否必须被重写|是否是接口|是否为泛型类型|是否是一个类或委托
-            _startupModules = assemblies.SelectMany(a => a.ExportedTypes)
+            StartupModules = assemblies.SelectMany(a => a.ExportedTypes)
                 .Where(s =>
                 !(s.IsAbstract || s.IsInterface || s.IsGenericType || !s.IsClass) &&
                 typeof(IStartupModule).IsAssignableFrom(s)).Select(s => Activate(s)).ToList();
