@@ -24,14 +24,15 @@ namespace Easy.Core.Flow.StartupModules
             {
                 throw new ArgumentException("没有发现任何模块", nameof(assemblies));
             }
-
-            foreach (var type in assemblies.SelectMany(a => a.ExportedTypes))
+            // 是否必须被重写|是否是接口|是否为泛型类型|是否是一个类或委托
+            foreach (var type in assemblies.SelectMany(a => a.ExportedTypes)
+                .Where(s=> 
+                !(s.IsAbstract || s.IsInterface || s.IsGenericType || !s.IsClass)  && 
+                typeof(IStartupModule).IsAssignableFrom(s)))
             {
-                if (typeof(IStartupModule).IsAssignableFrom(type))
-                {
-                    var instance = Activate(type);
-                    StartupModules.Add(instance);
-                }
+
+                var instance = Activate(type);
+                StartupModules.Add(instance);
             }
         }
         /// <summary>
