@@ -12,7 +12,6 @@ namespace Easy.Core.Flow.Uow
     {
         public static IServiceCollection AddRivenAspNetCoreUow(this IServiceCollection services, Action<UnitOfWorkAttribute> optionsAction = null) {
 
-
             // 获取一个选项生成器，以便将同一命名 TOptions 的配置调用转发到基础服务集合。
             services.AddOptions<UnitOfWorkAttribute>();
             if (optionsAction != null)

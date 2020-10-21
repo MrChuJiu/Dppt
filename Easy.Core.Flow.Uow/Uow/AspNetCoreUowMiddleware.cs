@@ -58,7 +58,7 @@ namespace Easy.Core.Flow.AspNetCore.Mvc.Uow
             var currentConnectionStringName = serviceProvider.GetService<ICurrentConnectionStringNameProvider>()?.Current;
 
 
-            // 创建选项
+            // 得到工作单元选项
             var unitOfWorkOptions = unitOfWorkAttribute.CreateOptions(currentConnectionStringName);
             // 启动工作单元
             var unitOfWorkManager = serviceProvider.GetRequiredService<IUnitOfWorkManager>();

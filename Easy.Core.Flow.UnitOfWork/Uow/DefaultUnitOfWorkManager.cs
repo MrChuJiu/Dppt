@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Transactions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Easy.Core.Flow.UnitOfWork.Uow
 {
@@ -34,7 +35,39 @@ namespace Easy.Core.Flow.UnitOfWork.Uow
 
         public IUnitOfWorkCompleteHandle Begin(UnitOfWorkOptions options)
         {
-            throw new NotImplementedException();
+            var outerUow = _currentUnitOfWorkProvider.Current;
+
+            if (options.Scope == TransactionScopeOption.Required && outerUow != null)
+            {
+                return new InnerUnitOfWorkCompleteHandle();
+            }
+            var uow = _serviceProvider.GetService<IUnitOfWork>();
+            uow.Completed += (sender, args) =>
+            {
+                _currentUnitOfWorkProvider.Current = null;
+            };
+
+            uow.Failed += (sender, args) =>
+            {
+                _currentUnitOfWorkProvider.Current = null;
+            };
+
+            uow.Disposed += (sender, args) =>
+            {
+                uow.Dispose();
+            };
+
+            uow.Begin(options);
+            // 从外部UOW继承connectionStringName todo 理解为嵌套工作单元
+            if (outerUow != null)
+            {
+                uow.SetConnectionStringName(outerUow.GetConnectionStringName());
+            }
+
+            _currentUnitOfWorkProvider.Current = uow;
+
+
+            return uow;
         }
     }
 }

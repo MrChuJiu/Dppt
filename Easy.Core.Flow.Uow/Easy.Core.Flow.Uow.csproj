@@ -10,7 +10,7 @@
  </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Easy.Core,Flow.AspectCore\Easy.Core.Flow.AspectCore.csproj" />
+    <ProjectReference Include="..\Easy.Core,Flow.AspectCore\Easy.Core.Flow.Riven.csproj" />
     <ProjectReference Include="..\Easy.Core.Flow.AspNetCore\Easy.Core.Flow.AspNetCore.csproj" />
     <ProjectReference Include="..\Easy.Core.Flow.UnitOfWork\Easy.Core.Flow.UnitOfWork.csproj" />
   </ItemGroup>
