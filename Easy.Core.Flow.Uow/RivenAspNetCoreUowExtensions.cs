@@ -1,5 +1,6 @@
 ﻿using Easy.Core.Flow.AspNetCore.Mvc.Uow;
 using Easy.Core.Flow.UnitOfWork.Uow;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
@@ -24,6 +25,16 @@ namespace Easy.Core.Flow.Uow
             services.TryAddTransient<AspNetCoreUowMiddleware>();
 
             return services;
+        }
+        /// <summary>
+        /// 添加 Riven AspNet Core Uow 中间件
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseRivenAspnetCoreUow(this IApplicationBuilder app)
+        {
+            app.UseMiddleware<AspNetCoreUowMiddleware>();
+            return app;
         }
     }
 }

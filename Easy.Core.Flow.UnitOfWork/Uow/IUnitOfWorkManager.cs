@@ -14,7 +14,7 @@ namespace Easy.Core.Flow.UnitOfWork.Uow
         /// <summary>
         /// 获取当前激活的工作单元,如果不存在则返回空
         /// </summary>
-        // IActiveUnitOfWork Current { get; }
+        IActiveUnitOfWork Current { get; }
 
         /// <summary>
         /// 启动一个新的工作单元
