@@ -15,12 +15,10 @@ namespace Easy.Core.Flow.UnitOfWork.Uow.Providers
         // 基于线程的本地变量存储 用于保存异步等待上下文中的共享变量的值
         // 对某个变量赋了值，而这个变量是多个线程共享的 可能会在等待期间线程被切换 导致值操作丢失
         private static readonly AsyncLocal<LocalUowWrapper> AsyncLocalUow = new AsyncLocal<LocalUowWrapper>();
-
         public AsyncLocalCurrentUnitOfWorkProvider()
         {
 
         }
-
         private static IUnitOfWork GetCurrentUow()
         {
             var uow = AsyncLocalUow.Value?.UnitOfWork;
@@ -37,7 +35,6 @@ namespace Easy.Core.Flow.UnitOfWork.Uow.Providers
 
             return uow;
         }
-
         private static void SetCurrentUow(IUnitOfWork value)
         {
             lock (AsyncLocalUow)
@@ -48,14 +45,12 @@ namespace Easy.Core.Flow.UnitOfWork.Uow.Providers
                     {
                         return;
                     }
-
                     if (AsyncLocalUow.Value.UnitOfWork?.Outer == null)
                     {
                         AsyncLocalUow.Value.UnitOfWork = null;
                         AsyncLocalUow.Value = null;
                         return;
                     }
-
                     AsyncLocalUow.Value.UnitOfWork = AsyncLocalUow.Value.UnitOfWork.Outer;
                 }
                 else
@@ -70,7 +65,6 @@ namespace Easy.Core.Flow.UnitOfWork.Uow.Providers
                         AsyncLocalUow.Value = new LocalUowWrapper(value);
                         return;
                     }
-
                     value.Outer = AsyncLocalUow.Value.UnitOfWork;
                     AsyncLocalUow.Value.UnitOfWork = value;
                 }

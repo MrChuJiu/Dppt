@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace Easy.Core.Flow.UnitOfWork.Uow.Handles
 {
+    /// <summary>
+    /// 调用 Complete()/CompleteAsync() 会将 _isCompleteCalled 置为 true，然后在 Dispose() 
+    /// 方法内会进行检测，为 faslse 的话直接抛出异常。可以看到在 InnerUnitOfWorkCompleteHandle 
+    /// 内部并不会真正地调用 DbContext.SaveChanges() 进行数据保存
+    /// </summary>
     public class InnerUnitOfWorkCompleteHandle : IUnitOfWorkCompleteHandle
     {
         public const string DidNotCallCompleteMethodExceptionMessage = "Did not call Complete method of a unit of work.";

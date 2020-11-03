@@ -80,21 +80,40 @@ namespace Test.RivenUow
             Task.Run(async () =>
             {
 
-
                 using (var scope = app.ApplicationServices.CreateScope())
                 {
 
                     var scopeServiceProvider = scope.ServiceProvider;
 
                     var unitOfWorkManager = scopeServiceProvider.GetService<IUnitOfWorkManager>();
-                    using (var uow = unitOfWorkManager.Begin())
+                   
+
+                    using (var outerUOW1 = unitOfWorkManager.Begin())  // 这里返回的是 IOC 解析出的 IUnitOfWork
                     {
+                        var appContext1 = unitOfWorkManager.Current.GetDbContext<AppDbContext>();
 
-                        var appContext = unitOfWorkManager.Current.GetDbContext<AppDbContext>();
+                        var user1 = new User();
+                        user1.Creator = "Creator1111";
+                        appContext1.Users.Add(user1);
+                        using (var innerUOW2 = unitOfWorkManager.Begin())  // 内部 UOW
+                        {
+                            var appContext2 = unitOfWorkManager.Current.GetDbContext<AppDbContext>();
+                            var user2 = new User();
+                            user2.Creator = "Creator222";
+                            appContext2.Users.Add(user2);
 
+                            using (var innerUOW3 = unitOfWorkManager.Begin())  // 内部 UOW
+                            {
+                                var appContext3 = unitOfWorkManager.Current.GetDbContext<AppDbContext>();
 
-
-                        await uow.CompleteAsync();
+                                var user3 = new User();
+                                user3.Creator = "Creator333";
+                                appContext3.Users.Add(user3);
+                                await innerUOW3.CompleteAsync();
+                            }
+                            await innerUOW2.CompleteAsync();
+                        }
+                        await outerUOW1.CompleteAsync();
                     }
                 }
 

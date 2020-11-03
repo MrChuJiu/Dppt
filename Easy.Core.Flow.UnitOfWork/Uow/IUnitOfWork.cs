@@ -16,7 +16,7 @@ namespace Easy.Core.Flow.UnitOfWork.Uow
         string Id { get; }
 
         /// <summary>
-        /// Reference to the outer UOW if exists.
+        /// 外部UOW的引用.
         /// </summary>
         IUnitOfWork Outer { get; set; }
 
