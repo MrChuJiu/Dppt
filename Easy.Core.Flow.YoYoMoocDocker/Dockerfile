@@ -3,7 +3,7 @@
 FROM registry.cn-hangzhou.aliyuncs.com/yoyosoft/dotnet/core/aspnet:3.1 AS base
 WORKDIR /app
 EXPOSE 80
-
+EXPOSE 443
 
 FROM registry.cn-hangzhou.aliyuncs.com/yoyosoft/dotnet/core/sdk AS build
 WORKDIR /src
