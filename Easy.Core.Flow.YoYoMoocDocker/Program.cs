@@ -27,7 +27,7 @@ namespace Easy.Core.Flow.YoYoMoocDocker
                     {
                         options.Listen(IPAddress.IPv6Any, 443, listenOptions =>
                         {
-                            Console.WriteLine("pfxµÿ÷∑£∫" + Path.Combine(AppContext.BaseDirectory, "socialnetwork.pfx"));
+                            Console.WriteLine("pfx£∫" + Path.Combine(AppContext.BaseDirectory, "socialnetwork.pfx"));
                             listenOptions.UseHttps(Path.Combine(AppContext.BaseDirectory, "socialnetwork.pfx"), "handong123");
                         });
 
