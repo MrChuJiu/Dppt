@@ -29,7 +29,6 @@ namespace Easy.Core.Flow.YoYoMoocDocker
                         {
                             Console.WriteLine("pfxµÿ÷∑£∫" + Path.Combine(AppContext.BaseDirectory, "socialnetwork.pfx"));
                             listenOptions.UseHttps(Path.Combine(AppContext.BaseDirectory, "socialnetwork.pfx"), "handong123");
-
                         });
 
                     });
