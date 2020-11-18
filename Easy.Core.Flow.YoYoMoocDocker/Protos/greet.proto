@@ -1,0 +1,23 @@
+// 语法结构，使用pb3
+syntax = "proto3";
+// 定义命名空间，一般是项目名或者解决方案名
+option csharp_namespace = "Easy.Core.Flow.GrpcService";
+// 定义服务的包
+package greet;
+
+ // 定义具体的服务
+service Greeter {
+// 定义某一个方法API，格式是：rpc 方法名(请求参数对象名) returns(返回参数对象名)
+  rpc SayHello (HelloRequest) returns (HelloReply);
+}
+
+// 定义请求的对象名
+message HelloRequest {
+  string name = 1;
+}
+
+// 定义返回的对象名
+message HelloReply {
+  // 有一个返回的字段是message
+  string message = 1;
+}
