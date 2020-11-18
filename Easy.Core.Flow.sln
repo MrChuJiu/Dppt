@@ -35,7 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Easy.Core.Flow.Appium", "Ea
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Easy.Core.Flow.YoYoMoocDocker", "Easy.Core.Flow.YoYoMoocDocker\Easy.Core.Flow.YoYoMoocDocker.csproj", "{A4E7FFF8-093E-44AF-89A8-4C772D423819}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Easy.Core.Flow.GrpcService", "Easy.Core.Flow.GrpcService\Easy.Core.Flow.GrpcService.csproj", "{5BDE1270-7F75-4BD8-A5B1-992B9BE8B3A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Easy.Core.Flow.GrpcService", "Easy.Core.Flow.GrpcService\Easy.Core.Flow.GrpcService.csproj", "{5BDE1270-7F75-4BD8-A5B1-992B9BE8B3A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Easy.Core.Flow.ImageSplicing", "Easy.Core.Flow.ImageSplicing\Easy.Core.Flow.ImageSplicing.csproj", "{36C154B4-E107-463D-BDBA-9221B5C082C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,6 +101,10 @@ Global
 		{5BDE1270-7F75-4BD8-A5B1-992B9BE8B3A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BDE1270-7F75-4BD8-A5B1-992B9BE8B3A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BDE1270-7F75-4BD8-A5B1-992B9BE8B3A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36C154B4-E107-463D-BDBA-9221B5C082C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36C154B4-E107-463D-BDBA-9221B5C082C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36C154B4-E107-463D-BDBA-9221B5C082C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36C154B4-E107-463D-BDBA-9221B5C082C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{74E49C8C-C7C9-4A19-B212-9CB48C463B4D} = {92D86724-E442-400B-B35D-61C8442CA426}
 		{A4E7FFF8-093E-44AF-89A8-4C772D423819} = {92D86724-E442-400B-B35D-61C8442CA426}
 		{5BDE1270-7F75-4BD8-A5B1-992B9BE8B3A6} = {92D86724-E442-400B-B35D-61C8442CA426}
+		{36C154B4-E107-463D-BDBA-9221B5C082C0} = {92D86724-E442-400B-B35D-61C8442CA426}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {80E96E55-192B-4E9A-8563-646985B8CFB8}
