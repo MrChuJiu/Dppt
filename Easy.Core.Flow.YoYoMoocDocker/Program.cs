@@ -22,6 +22,9 @@ namespace Easy.Core.Flow.YoYoMoocDocker
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+
+
+
                     webBuilder.UseStartup<Startup>()
                     .ConfigureKestrel(options =>
                     {
