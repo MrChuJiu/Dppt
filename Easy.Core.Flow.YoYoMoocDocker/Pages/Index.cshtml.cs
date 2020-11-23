@@ -14,6 +14,10 @@ namespace Easy.Core.Flow.YoYoMoocDocker.Pages
     {
         private readonly ILogger<IndexModel> _logger;
 
+
+        public string Name { get; set; }
+
+
         public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
@@ -21,14 +25,14 @@ namespace Easy.Core.Flow.YoYoMoocDocker.Pages
 
         public async Task OnGetAsync()
         {
-            //// 创建通道
-            //var channel = GrpcChannel.ForAddress("https://localhost:5001");
-            //// 发起客户端调用
-            //var client = new Greeter.GreeterClient(channel);
-            //// api请求，传递参数
-            //var response = await client.SayHelloAsync(new HelloRequest { Name = "World" });
+            // 创建通道
+            var channel = GrpcChannel.ForAddress("https://localhost:5001");
+            // 发起客户端调用
+            var client = new Greeter.GreeterClient(channel);
+            // api请求，传递参数
+            var response = await client.SayHelloAsync(new HelloRequest { Name = "World" });
 
-            //Console.WriteLine("Greeting: " + response.Message);
+            Console.WriteLine("Greeting: " + response.Message);
         }
     }
 }
