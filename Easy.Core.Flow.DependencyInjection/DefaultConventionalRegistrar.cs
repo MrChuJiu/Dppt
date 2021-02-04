@@ -9,6 +9,11 @@ namespace Easy.Core.Flow.DependencyInjection
 {
     public class DefaultConventionalRegistrar : ConventionalRegistrarBase
     {
+        static IExposedServiceTypesProvider ExposedServiceTypesProvider = new ExposedServiceTypesProvider {
+
+            IncludeSelf = true,
+            IncludeDefaults = true
+        };
         public override void AddType(IServiceCollection services, Type type)
         {
             // 获取type继承的那个生命周期接口
@@ -96,7 +101,7 @@ namespace Easy.Core.Flow.DependencyInjection
             return type
                 .GetCustomAttributes(true)
                 .OfType<IExposedServiceTypesProvider>()
-                .DefaultIfEmpty(ExposedServiceTypesConfig.DefaultExposeServicesAttribute)
+                .DefaultIfEmpty(ExposedServiceTypesProvider)
                 .SelectMany(p => p.GetExposedServiceTypes(type))
                 .Distinct()
                 .ToList();
