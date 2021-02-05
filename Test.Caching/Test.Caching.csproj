@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Easy.Core.Flow.Caching\Easy.Core.Flow.Caching.csproj" />
+    <ProjectReference Include="..\Easy.Core.Flow.RedisCache\Easy.Core.Flow.RedisCache.csproj" />
   </ItemGroup>
 
 </Project>

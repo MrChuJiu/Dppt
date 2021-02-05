@@ -11,7 +11,7 @@ namespace Easy.Core.Flow.Caching
     /// </summary>
     public abstract class CacheBase : ICache
     {
-        public string Name { get; }
+        public string Name { get; protected set; }
 
         public TimeSpan DefaultSlidingExpireTime { get; set; }
 

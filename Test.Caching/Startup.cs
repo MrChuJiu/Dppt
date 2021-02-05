@@ -12,8 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Easy.Core.Flow.Caching;
-using Easy.Core.Flow.Caching.Configuration;
-using Easy.Core.Flow.Caching.Memory;
+using Easy.Core.Flow.RedisCache;
 using Microsoft.AspNetCore.Http;
 
 namespace Test.Caching
@@ -37,7 +36,17 @@ namespace Test.Caching
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test.Caching", Version = "v1" });
             });
 
-            services.AddEasyCoreFlowCaching(configurationAction =>
+            //services.AddEasyCoreFlowCaching(configurationAction =>
+            //{
+            //    var defaultSlidingExpireTime = TimeSpan.FromHours(24);
+            //    configurationAction.ConfigureAll(cache =>
+            //    {
+            //        cache.DefaultSlidingExpireTime = defaultSlidingExpireTime;
+            //    });
+            //    return configurationAction;
+            //});
+
+            services.AddEasyCoreFlowRedis(configurationAction =>
             {
                 var defaultSlidingExpireTime = TimeSpan.FromHours(24);
                 configurationAction.ConfigureAll(cache =>
@@ -46,6 +55,7 @@ namespace Test.Caching
                 });
                 return configurationAction;
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
