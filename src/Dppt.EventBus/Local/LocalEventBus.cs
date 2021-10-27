@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Dppt.EventBus
 {
-    public class LocalEventBus : IEventBus
+    public class LocalEventBus : ILocalEventBus
     {
         protected IServiceScopeFactory ServiceScopeFactory { get; }
 

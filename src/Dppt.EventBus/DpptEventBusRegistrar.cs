@@ -15,8 +15,7 @@ namespace Dppt.EventBus
         public static void AddDpptEventBus(this IServiceCollection services, List<Type> types) {
 
 
-            services.AddSingleton<IEventBus, LocalEventBus>();
-
+            services.AddSingleton<ILocalEventBus, LocalEventBus>();
             var localHandlers = types;/*.Where(s => typeof(ILocalEventHandler<>).IsAssignableFrom(s)).ToList();*/
 
             foreach (var item in localHandlers)
