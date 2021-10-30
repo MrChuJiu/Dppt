@@ -1,7 +1,9 @@
 ﻿using Dppt.Core.Dppt;
 using Dppt.Core.Dppt.Collections;
+using Dppt.Core.Dppt.Threading;
 using Dppt.EventBus.Distributed;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
@@ -17,29 +19,65 @@ namespace Dppt.EventBus.RabbitMQ
 {
     public class RabbitMqDistributedEventBus : IDistributedEventBus
     {
-        protected DpptRabbitMqEventBusOptions RabbitMqEventBusOptions { get; }
+        /// <summary>
+        /// rabbmitmq 连接服务
+        /// </summary>
         public readonly IRabbitMqConnections _rabbitMqConnections;
 
-        protected IServiceScopeFactory ServiceScopeFactory { get; }
-        protected ConcurrentDictionary<Type, List<IEventHandlerFactory>> HandlerFactories { get; }
-        protected ConcurrentDictionary<string, Type> EventTypes { get; }
+        /// <summary>
+        /// 用于配置服务的交换名称
+        /// </summary>
+        protected DpptRabbitMqEventBusOptions RabbitMqEventBusOptions { get; }
 
+        /// <summary>
+        /// 交换机相关参数会在Initialize被初始化用于构造消费者
+        /// </summary>
         protected ExchangeDeclareConfiguration Exchange { get; private set; }
+        /// <summary>
+        /// 队列相关参数Initialize被初始化用于构造消费者
+        /// </summary>
         protected QueueDeclareConfiguration Queue { get; private set; }
+        /// <summary>
+        /// 构建给消费者使用
+        /// </summary>
         protected IModel Channel { get; private set; }
+        /// <summary>
+        /// 该队列用于bind队列
+        /// </summary>
+        protected ConcurrentQueue<QueueBindCommand> QueueBindCommands { get; }
+        /// <summary>
+        /// 服务工厂
+        /// </summary>
+        protected IServiceScopeFactory ServiceScopeFactory { get; }
+        /// <summary>
+        /// 根据实体类型存放Handler服务工厂
+        /// </summary>
+        protected ConcurrentDictionary<Type, List<IEventHandlerFactory>> HandlerFactories { get; }
+        /// <summary>
+        /// key = eventName，value = handler
+        /// </summary>
+        protected ConcurrentDictionary<string, Type> EventTypes { get; }
+        /// <summary>
+        /// Hanler注册配置
+        /// </summary>
+        protected DistributedEventBusOptions DistributedEventBusOptions { get; }
+
+        protected object ChannelSendSyncLock { get; } = new object();
 
 
-        //private IModel _consumerChannel;
 
-        public RabbitMqDistributedEventBus(IRabbitMqConnections rabbitMqConnections, DpptRabbitMqEventBusOptions rabbitMqEventBusOptions, IServiceScopeFactory serviceScopeFactory)
+        public RabbitMqDistributedEventBus(IRabbitMqConnections rabbitMqConnections, IOptions<DpptRabbitMqEventBusOptions> options, IOptions<DistributedEventBusOptions> distributedEventBusOptions, IServiceScopeFactory serviceScopeFactory)
         {
             _rabbitMqConnections = rabbitMqConnections;
-            RabbitMqEventBusOptions = rabbitMqEventBusOptions;
+            RabbitMqEventBusOptions = options.Value;
             ServiceScopeFactory = serviceScopeFactory;
-            //_consumerChannel = CreateConsumerChannel();
+            DistributedEventBusOptions = distributedEventBusOptions.Value;
             HandlerFactories = new ConcurrentDictionary<Type, List<IEventHandlerFactory>>();
             EventTypes = new ConcurrentDictionary<string, Type>();
+            QueueBindCommands = new ConcurrentQueue<QueueBindCommand>();
         }
+
+        
 
         public Task PublishAsync<TEvent>(TEvent eventData)
         {
@@ -47,7 +85,6 @@ namespace Dppt.EventBus.RabbitMQ
             var body = JsonSerializer.Serialize(eventData);
             return PublishAsync(eventName, body, null, null);
         }
-
 
         public Task PublishAsync(string eventName, string body, IBasicProperties properties, Dictionary<string, object> headersArguments = null, Guid? eventId = null)
         {
@@ -104,123 +141,28 @@ namespace Dppt.EventBus.RabbitMQ
             }
         }
 
-        //private IModel CreateConsumerChannel()
-        //{
-        //    if (!_rabbitMqConnections.IsConnected)
-        //    {
-        //        _rabbitMqConnections.TryConnect();
-        //    }
-
-        //    var channel = _rabbitMqConnections.CreateModel();
-
-        //    channel.ExchangeDeclare(exchange: RabbitMqEventBusOptions.ExchangeName,
-        //                            type: "direct");
 
 
-        //    channel.QueueDeclare(queue: "",
-        //                         durable: true,
-        //                         exclusive: false,
-        //                         autoDelete: false,
-        //                         arguments: null);
-
-        //    channel.CallbackException += (sender, ea) =>
-        //    {
-        //        _consumerChannel.Dispose();
-        //        _consumerChannel = CreateConsumerChannel();
-        //        StartBasicConsume();
-        //    };
-
-        //    return channel;
-        //}
-
-        //private void StartBasicConsume()
-        //{
-        //    if (_consumerChannel != null)
-        //    {
-        //        var consumer = new AsyncEventingBasicConsumer(_consumerChannel);
-
-        //        consumer.Received += Consumer_Received;
-
-        //        _consumerChannel.BasicConsume(
-        //            queue: "",
-        //            autoAck: false,
-        //            consumer: consumer);
-        //    }
-        //}
-
-        //private async Task Consumer_Received(object sender, BasicDeliverEventArgs eventArgs)
-        //{
-        //    var eventName = eventArgs.RoutingKey;
-        //    var message = Encoding.UTF8.GetString(eventArgs.Body.Span);
-
-        //    try
-        //    {
-        //        if (message.ToLowerInvariant().Contains("throw-fake-exception"))
-        //        {
-        //            throw new InvalidOperationException($"Fake exception requested: \"{message}\"");
-        //        }
-
-        //        await ProcessEvent(eventName, message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception($"----- ERROR Processing message \"{ex.Message}\"");
-        //    }
-        //    // 就算出现消息，也要发回消息确认（可以采用死信队列）
-        //    _consumerChannel.BasicAck(eventArgs.DeliveryTag, multiple: false);
-        //}
-
-        //private async Task ProcessEvent(string eventName, string message)
-        //{
-        //    if (_subsManager.HasSubscriptionsForEvent(eventName))
-        //    {
-        //        using (var scope = _autofac.BeginLifetimeScope(AUTOFAC_SCOPE_NAME))
-        //        {
-        //            var subscriptions = _subsManager.GetHandlersForEvent(eventName);
-        //            foreach (var subscription in subscriptions)
-        //            {
-        //                if (subscription.IsDynamic)
-        //                {
-        //                    var handler = scope.ResolveOptional(subscription.HandlerType) as IDynamicIntegrationEventHandler;
-        //                    if (handler == null) continue;
-        //                    using dynamic eventData = JsonDocument.Parse(message);
-        //                    await Task.Yield();
-        //                    await handler.Handle(eventData);
-        //                }
-        //                else
-        //                {
-        //                    var handler = scope.ResolveOptional(subscription.HandlerType);
-        //                    if (handler == null) continue;
-        //                    var eventType = _subsManager.GetEventTypeByName(eventName);
-        //                    var integrationEvent = JsonSerializer.Deserialize(message, eventType, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-        //                    var concreteType = typeof(IDistributedEventHandler<>).MakeGenericType(eventType);
-
-        //                    await Task.Yield();
-        //                    await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { integrationEvent });
-        //                }
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        _logger.LogWarning("No subscription for RabbitMQ event: {EventName}", eventName);
-        //    }
-        //}
 
 
-        public void Initialize(ExchangeDeclareConfiguration exchange, QueueDeclareConfiguration queue)
+        public void Initialize()
         {
 
-            Exchange = exchange;
-            Queue = queue;
+            Exchange = new ExchangeDeclareConfiguration(RabbitMqEventBusOptions.ExchangeName,"direct",true);
+            Queue = new QueueDeclareConfiguration(RabbitMqEventBusOptions.ClientName, true, false, false);
 
             // 启动一个消费者
             if (!_rabbitMqConnections.IsConnected)
             {
                 _rabbitMqConnections.TryConnect();
             }
-            using (Channel = _rabbitMqConnections.CreateModel())
+
+            try
             {
+
+                Channel = _rabbitMqConnections.CreateModel();
+
+
 
                 Channel.ExchangeDeclare(
                   exchange: Exchange.ExchangeName,
@@ -248,14 +190,35 @@ namespace Dppt.EventBus.RabbitMQ
                     consumer: consumer
                 );
 
+                SubscribeHandlers(DistributedEventBusOptions.Handlers);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error:" + ex.Message);
             }
         }
 
-
+        /// <summary>
+        /// 收到消息后 通过反射查找相应的handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="basicDeliverEventArgs"></param>
+        /// <returns></returns>
         protected virtual async Task HandleIncomingMessageAsync(object sender, BasicDeliverEventArgs basicDeliverEventArgs)
         {
             try
             {
+                var eventName = basicDeliverEventArgs.RoutingKey;
+                var eventType = EventTypes.GetOrDefault(eventName);
+                if (eventType == null)
+                {
+                    return;
+                }
+                var eventBytes = basicDeliverEventArgs.Body.ToArray();
+                // 调用实现方式
+                var eventData = JsonSerializer.Deserialize(eventBytes, eventType);
+                await TriggerHandlersAsync(eventType, eventData);
+
                 Channel.BasicAck(basicDeliverEventArgs.DeliveryTag, multiple: false);
             }
             catch (Exception ex)
@@ -271,8 +234,6 @@ namespace Dppt.EventBus.RabbitMQ
                 catch { }
             }
         }
-
-
 
         protected virtual async Task TriggerHandlersAsync(Type eventType, object eventData)
         {
@@ -350,13 +311,13 @@ namespace Dppt.EventBus.RabbitMQ
                     var genericArgs = @interface.GetGenericArguments();
                     if (genericArgs.Length == 1)
                     {
-                        Subscribe(genericArgs[0], new IocEventHandlerFactory(ServiceScopeFactory, handler));
+                        SubscribeAsync(genericArgs[0], new IocEventHandlerFactory(ServiceScopeFactory, handler));
                     }
                 }
             }
         }
 
-        public override IDisposable Subscribe(Type eventType, IEventHandlerFactory factory)
+        public  async Task<IDisposable> SubscribeAsync(Type eventType, IEventHandlerFactory factory)
         {
             var handlerFactories = GetOrCreateHandlerFactories(eventType);
 
@@ -369,10 +330,57 @@ namespace Dppt.EventBus.RabbitMQ
 
             if (handlerFactories.Count == 1) //TODO: Multi-threading!
             {
-                Consumer.BindAsync(EventNameAttribute.GetNameOrDefault(eventType));
+                QueueBindCommands.Enqueue(new QueueBindCommand(QueueBindType.Bind, EventNameAttribute.GetNameOrDefault(eventType)));
+                await TrySendQueueBindCommandsAsync();
             }
 
             return new EventHandlerFactoryUnregistrar(this, eventType, factory);
+        }
+
+        private async Task TrySendQueueBindCommandsAsync()
+        {
+            try
+            {
+                while (!QueueBindCommands.IsEmpty)
+                {
+                    if (Channel == null || Channel.IsClosed)
+                    {
+                        return;
+                    }
+
+                    lock (ChannelSendSyncLock)
+                    {
+                        if (QueueBindCommands.TryPeek(out var command))
+                        {
+                            switch (command.Type)
+                            {
+                                case QueueBindType.Bind:
+                                    Channel.QueueBind(
+                                        queue: Queue.QueueName,
+                                        exchange: Exchange.ExchangeName,
+                                        routingKey: command.RoutingKey
+                                    );
+                                    break;
+                                case QueueBindType.Unbind:
+                                    Channel.QueueUnbind(
+                                        queue: Queue.QueueName,
+                                        exchange: Exchange.ExchangeName,
+                                        routingKey: command.RoutingKey
+                                    );
+                                    break;
+                                default:
+                                    throw new AbpException($"Unknown {nameof(QueueBindType)}: {command.Type}");
+                            }
+
+                            QueueBindCommands.TryDequeue(out command);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"{ex.Message}");
+            }
         }
 
         private List<IEventHandlerFactory> GetOrCreateHandlerFactories(Type eventType)
@@ -395,7 +403,27 @@ namespace Dppt.EventBus.RabbitMQ
         /// <param name="factory"></param>
         public void Unsubscribe(Type eventType, IEventHandlerFactory factory)
         {
-            throw new NotImplementedException();
+            GetOrCreateHandlerFactories(eventType).Locking(factories => factories.Remove(factory));
         }
+    }
+
+
+
+    public class QueueBindCommand
+    {
+        public QueueBindType Type { get; }
+
+        public string RoutingKey { get; }
+
+        public QueueBindCommand(QueueBindType type, string routingKey)
+        {
+            Type = type;
+            RoutingKey = routingKey;
+        }
+    }
+    public enum QueueBindType
+    {
+        Bind,
+        Unbind
     }
 }

@@ -15,24 +15,27 @@ namespace Dppt.EventBus.RabbitMQ
     {
         public static void AddDpptEventBusRabbitMq(this IServiceCollection services, IConfiguration configuration, List<Type> types)
         {
+     
             services.AddSingleton<IRabbitMqConnections>(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<RabbitMqConnections>>();
 
                 var factory = new ConnectionFactory()
                 {
-                    HostName = configuration["EventBusConnection"],
-                    DispatchConsumersAsync = true
-                };
+                    HostName = configuration["RabbitMQ:EventBusConnection"],
+                    VirtualHost = configuration["RabbitMQ:EventBusVirtualHost"],
+                    DispatchConsumersAsync = true,
+                    AutomaticRecoveryEnabled = true
+            };
 
-                if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
+                if (!string.IsNullOrEmpty(configuration["RabbitMQ:EventBusUserName"]))
                 {
-                    factory.UserName = configuration["EventBusUserName"];
+                    factory.UserName = configuration["RabbitMQ:EventBusUserName"];
                 }
 
-                if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
+                if (!string.IsNullOrEmpty(configuration["RabbitMQ:EventBusPassword"]))
                 {
-                    factory.Password = configuration["EventBusPassword"];
+                    factory.Password = configuration["RabbitMQ:EventBusPassword"];
                 }
 
                 return new RabbitMqConnections(factory, logger);
@@ -49,13 +52,15 @@ namespace Dppt.EventBus.RabbitMQ
                 options.Handlers.AddIfNotContains(distributedHandlers);
             });
 
-            services.Configure<DpptRabbitMqEventBusOptions>(options =>
-            {
-                options.ExchangeName = "";
+            services.Configure<DpptRabbitMqEventBusOptions>(options => {
+
+                options.ExchangeName = configuration["RabbitMQ:EventBus:ExchangeName"];
+                options.ClientName = configuration["RabbitMQ:EventBus:ClientName"];
             });
 
             services.AddSingleton<IDistributedEventBus, RabbitMqDistributedEventBus>();
 
+          
         }
     }
 }

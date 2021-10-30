@@ -10,5 +10,9 @@ namespace Dppt.EventBus.RabbitMQ
     {
         // 交换器名称
         public string ExchangeName { get; set; }
+        /// <summary>
+        /// 队列名（放客户端名称）
+        /// </summary>
+        public string ClientName { get; set; }
     }
 }
