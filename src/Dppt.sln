@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31129.286
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31825.309
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dppt.Authorization", "Dppt.Authorization\Dppt.Authorization.csproj", "{14556F6E-7142-42F3-AC38-C101FD9730CF}"
 EndProject
@@ -27,7 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dppt.EventBus.Samples", "Dp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dppt.EventBus.RabbitMQ", "Dppt.EventBus.RabbitMQ\Dppt.EventBus.RabbitMQ.csproj", "{2E7F11BE-0C6C-4247-B76D-6A34568F4C09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dppt.EventBusDistrbuted.Samples", "Dppt.EventBusDistrbuted.Samples\Dppt.EventBusDistrbuted.Samples.csproj", "{49DAB13F-353A-45A4-B01A-361A742B70CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dppt.EventBusDistrbuted.Samples", "Dppt.EventBusDistrbuted.Samples\Dppt.EventBusDistrbuted.Samples.csproj", "{49DAB13F-353A-45A4-B01A-361A742B70CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dppt.EventBus.Boxes", "Dppt.EventBus.Boxes\Dppt.EventBus.Boxes.csproj", "{265FB206-7FA7-4C6F-A1C0-058D646036CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{49DAB13F-353A-45A4-B01A-361A742B70CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49DAB13F-353A-45A4-B01A-361A742B70CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49DAB13F-353A-45A4-B01A-361A742B70CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{265FB206-7FA7-4C6F-A1C0-058D646036CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{265FB206-7FA7-4C6F-A1C0-058D646036CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{265FB206-7FA7-4C6F-A1C0-058D646036CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{265FB206-7FA7-4C6F-A1C0-058D646036CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{6294D814-8A0E-4A0E-BEA3-971AC9EA4D8D} = {D906F8FB-E788-4F9F-BF1B-3718A0620786}
 		{2E7F11BE-0C6C-4247-B76D-6A34568F4C09} = {D906F8FB-E788-4F9F-BF1B-3718A0620786}
 		{49DAB13F-353A-45A4-B01A-361A742B70CB} = {D906F8FB-E788-4F9F-BF1B-3718A0620786}
+		{265FB206-7FA7-4C6F-A1C0-058D646036CE} = {D906F8FB-E788-4F9F-BF1B-3718A0620786}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C8ECA8E7-1D14-435D-B692-FBC74E048717}
