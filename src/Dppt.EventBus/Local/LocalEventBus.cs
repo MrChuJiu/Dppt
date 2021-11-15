@@ -144,8 +144,33 @@ namespace Dppt.EventBus
         {
             GetOrCreateHandlerFactories(eventType).Locking(factories => factories.Remove(factory));
         }
+
+        public async Task PublishAsync(Type eventType, object eventData)
+        {
+            await PublishToEventBusAsync(eventType, eventData);
+        }
+
+        protected  async Task PublishToEventBusAsync(Type eventType, object eventData)
+        {
+            await PublishAsync(new LocalEventMessage(Guid.NewGuid(), eventData, eventType));
+        }
     }
 
+    public class LocalEventMessage
+    {
+        public Guid MessageId { get; }
+
+        public object EventData { get; }
+
+        public Type EventType { get; }
+
+        public LocalEventMessage(Guid messageId, object eventData, Type eventType)
+        {
+            MessageId = messageId;
+            EventData = eventData;
+            EventType = eventType;
+        }
+    }
 
     public class EventTypeWithEventHandlerFactories
     {

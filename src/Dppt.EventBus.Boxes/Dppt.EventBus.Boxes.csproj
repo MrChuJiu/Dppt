@@ -8,4 +8,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.10" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Dppt.EventBus\Dppt.EventBus.csproj" />
+  </ItemGroup>
+
 </Project>

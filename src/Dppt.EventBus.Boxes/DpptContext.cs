@@ -1,5 +1,8 @@
 ﻿using Dppt.EventBus.Boxes.Entities;
+using Dppt.EventBus.Distributed;
+using Dppt.EventBus.Local;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +14,17 @@ namespace Dppt.EventBus.Boxes
 {
     public abstract class DpptContext<TDbContext> : DbContext where TDbContext : DbContext
     {
+        protected IServiceProvider ServiceProvider { get; }
+
+        private IDistributedEventBus DistributedEventBus => ServiceProvider.GetRequiredService<IDistributedEventBus>();
+
+        private ILocalEventBus LocalEventsBus => ServiceProvider.GetRequiredService<ILocalEventBus>();
+
+        protected DpptContext(IServiceProvider serviceProvider)
+        {
+            ServiceProvider = serviceProvider;
+        }
+
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
 
@@ -18,14 +32,13 @@ namespace Dppt.EventBus.Boxes
 
             var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 
-            PublishEntityEvents(eventReport);
+            await PublishEntityEventsAsync(eventReport);
 
             return result;
         }
 
-
-
-        protected virtual EntityEventReport CreateEventReport() {
+        protected virtual EntityEventReport CreateEventReport()
+        {
             var eventReport = new EntityEventReport();
 
 
@@ -73,20 +86,22 @@ namespace Dppt.EventBus.Boxes
 
         }
 
-        private void PublishEntityEvents(EntityEventReport changeReport)
+        private async Task PublishEntityEventsAsync(EntityEventReport changeReport)
         {
             foreach (var localEvent in changeReport.DomainEvents)
             {
-                UnitOfWorkManager.Current?.AddOrReplaceLocalEvent(
-                    new UnitOfWorkEventRecord(localEvent.EventData.GetType(), localEvent.EventData, localEvent.EventOrder)
-                );
+                await LocalEventsBus.PublishAsync(localEvent.EventData.GetType(), localEvent.EventData);
             }
 
             foreach (var distributedEvent in changeReport.DistributedEvents)
             {
-                UnitOfWorkManager.Current?.AddOrReplaceDistributedEvent(
-                    new UnitOfWorkEventRecord(distributedEvent.EventData.GetType(), distributedEvent.EventData, distributedEvent.EventOrder)
-                );
+
+                await DistributedEventBus.PublishAsync(
+                  distributedEvent.EventType,
+                  distributedEvent.EventData,
+                  onUnitOfWorkComplete: false,
+                  useOutbox: distributedEvent.UseOutbox
+              );
             }
         }
     }

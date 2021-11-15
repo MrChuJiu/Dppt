@@ -10,6 +10,10 @@ namespace Dppt.EventBus.Distributed
     {
 
 
-
+        Task PublishAsync(
+         Type eventType,
+         object eventData,
+         bool onUnitOfWorkComplete = true,
+         bool useOutbox = true);
     }
 }

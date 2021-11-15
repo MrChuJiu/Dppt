@@ -8,6 +8,6 @@ namespace Dppt.EventBus.Local
 {
     public interface ILocalEventBus : IEventBus
     {
-
+        Task PublishAsync(Type eventType, object eventData);
     }
 }

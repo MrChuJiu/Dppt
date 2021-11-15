@@ -62,11 +62,13 @@ namespace Dppt.EventBus.RabbitMQ
         /// </summary>
         protected DistributedEventBusOptions DistributedEventBusOptions { get; }
 
+        protected IServiceProvider ServiceProvider { get; }
+
         protected object ChannelSendSyncLock { get; } = new object();
 
 
 
-        public RabbitMqDistributedEventBus(IRabbitMqConnections rabbitMqConnections, IOptions<DpptRabbitMqEventBusOptions> options, IOptions<DistributedEventBusOptions> distributedEventBusOptions, IServiceScopeFactory serviceScopeFactory)
+        public RabbitMqDistributedEventBus(IRabbitMqConnections rabbitMqConnections, IOptions<DpptRabbitMqEventBusOptions> options, IOptions<DistributedEventBusOptions> distributedEventBusOptions, IServiceScopeFactory serviceScopeFactory, IServiceProvider serviceProvider)
         {
             _rabbitMqConnections = rabbitMqConnections;
             RabbitMqEventBusOptions = options.Value;
@@ -75,15 +77,24 @@ namespace Dppt.EventBus.RabbitMQ
             HandlerFactories = new ConcurrentDictionary<Type, List<IEventHandlerFactory>>();
             EventTypes = new ConcurrentDictionary<string, Type>();
             QueueBindCommands = new ConcurrentQueue<QueueBindCommand>();
+            ServiceProvider = serviceProvider;
         }
 
-        
+
 
         public Task PublishAsync<TEvent>(TEvent eventData)
         {
             var eventName = EventNameAttribute.GetNameOrDefault(typeof(TEvent));
             var body = JsonSerializer.Serialize(eventData);
             return PublishAsync(eventName, body, null, null);
+        }
+
+        public Task PublishAsync(Type eventType, object eventData, IBasicProperties properties, Dictionary<string, object> headersArguments = null)
+        {
+            var eventName = EventNameAttribute.GetNameOrDefault(eventType);
+            var body = JsonSerializer.Serialize(eventData);
+
+            return PublishAsync(eventName, body, properties, headersArguments);
         }
 
         public Task PublishAsync(string eventName, string body, IBasicProperties properties, Dictionary<string, object> headersArguments = null, Guid? eventId = null)
@@ -405,6 +416,51 @@ namespace Dppt.EventBus.RabbitMQ
         {
             GetOrCreateHandlerFactories(eventType).Locking(factories => factories.Remove(factory));
         }
+
+        public async Task PublishAsync(Type eventType, object eventData, bool onUnitOfWorkComplete = true, bool useOutbox = true)
+        {
+            if (useOutbox)
+            {
+                if (await AddToOutboxAsync(eventType, eventData))
+                {
+                    return;
+                }
+            }
+
+            await PublishToEventBusAsync(eventType, eventData);
+        }
+
+        protected  async Task PublishToEventBusAsync(Type eventType, object eventData)
+        {
+            await PublishAsync(eventType, eventData, null);
+        }
+
+
+        private async Task<bool> AddToOutboxAsync(Type eventType, object eventData)
+        {
+
+            foreach (var outboxConfig in DistributedEventBusOptions.Outboxes.Values)
+            {
+                if (outboxConfig.Selector == null || outboxConfig.Selector(eventType))
+                {
+                    var eventOutbox = (IEventOutbox)ServiceProvider.GetRequiredService(outboxConfig.ImplementationType);
+                    var eventName = EventNameAttribute.GetNameOrDefault(eventType);
+                    await eventOutbox.EnqueueAsync(
+                        new OutgoingEventInfo(
+                            Guid.NewGuid(),
+                            eventName,
+                            Encoding.UTF8.GetBytes(JsonSerializer.Serialize(eventData)),
+                            DateTime.Now
+                        )
+                    );
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
     }
 
 

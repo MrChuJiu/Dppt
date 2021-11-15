@@ -10,7 +10,6 @@ namespace Dppt.EventBus
     {
         Task PublishAsync<TEvent>(TEvent eventData);
 
-
         void Unsubscribe(Type eventType, IEventHandlerFactory factory);
     }
 }

@@ -11,6 +11,11 @@ namespace Dppt.EventBus.Distributed
     {
         public ITypeList<IEventHandler> Handlers { get; }
 
+        public OutboxConfigDictionary Outboxes { get; }
+
+        public InboxConfigDictionary Inboxes { get; }
+
+
         public DistributedEventBusOptions()
         {
             Handlers = new TypeList<IEventHandler>();
