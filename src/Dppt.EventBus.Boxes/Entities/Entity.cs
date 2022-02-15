@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dppt.Core.System.Generic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Dppt.EventBus.Boxes.Entities
     {
         protected Entity()
         {
-            EntityHelper.TrySetTenantId(this);
+            
         }
 
         /// <inheritdoc/>

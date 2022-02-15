@@ -11,11 +11,12 @@ namespace Dppt.Authorization.Abstractions.Extends
 
         private static Dictionary<string, PermissionGrantCacheItem> CacheDictionary = new Dictionary<string, PermissionGrantCacheItem>();
         public ILogger<PermissionStore> Logger { get; set; }
-
         protected IPermissionDefinitionManager PermissionDefinitionManager { get; }
 
 
-        public Task<bool> IsGrantedAsync(string name, string providerName, string providerKey)
+
+
+        public async Task<bool> IsGrantedAsync(string name, string providerName, string providerKey)
         {
             return (await GetCacheItemAsync(name, providerName, providerKey)).IsGranted;
         }

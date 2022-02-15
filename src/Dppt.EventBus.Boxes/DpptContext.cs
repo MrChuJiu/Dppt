@@ -97,10 +97,10 @@ namespace Dppt.EventBus.Boxes
             {
 
                 await DistributedEventBus.PublishAsync(
-                  distributedEvent.EventType,
+                  distributedEvent.EventData.GetType(),
                   distributedEvent.EventData,
                   onUnitOfWorkComplete: false,
-                  useOutbox: distributedEvent.UseOutbox
+                  useOutbox: true
               );
             }
         }
